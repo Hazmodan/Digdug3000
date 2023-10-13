@@ -3,6 +3,8 @@
 #include <time.h>
 #include "SdlInput.h"
 #include "Windows.h">
+#include "fileLogger.h"
+#include "consoleLogger.h"
 
 static SDL_Renderer* _renderer = NULL;
 static SDL_Window* _window = NULL;
@@ -13,17 +15,18 @@ bool Engine::Init(const char* name, int w, int h) {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         SDL_Log(SDL_GetError());
         return false;
-
     }
     int _x = SDL_WINDOWPOS_CENTERED;
     int _y = SDL_WINDOWPOS_CENTERED;
     Uint32 _flag = SDL_WINDOW_TOOLTIP;
     _window = SDL_CreateWindow(name, _x, _y, w, h, _flag);
+
     if (!_window)
     {
         SDL_Log(SDL_GetError());
         return false;
     }
+
 
     Uint32 _flag2 = SDL_RENDERER_ACCELERATED;
     _renderer = SDL_CreateRenderer(_window, -1, _flag2);
@@ -36,6 +39,17 @@ bool Engine::Init(const char* name, int w, int h) {
     m_Input = new SdlInput();
     m_IsInit = true;
 
+#ifdef _DEBUG
+    m_Logger = new ConsoleLogger();
+#endif
+
+     
+    //This is release
+#ifdef NDEBUG
+    m_Logger = new FileLogger();
+
+#endif
+
     return true;
 }
 
@@ -47,6 +61,7 @@ void Engine::Start(void) {
     }
     m_Input->m_IsRunning = true;
     clock_t _end = clock();
+
 
     while (m_Input->m_IsRunning) {
         const clock_t _start = clock();
@@ -73,15 +88,19 @@ void Engine::Update(float dt)
 
     if (m_Input->IsKeyDown(SDL_SCANCODE_D)) {
         x += 100 * dt;
+        m_Logger->Log("D is pressed");
     }
     if (m_Input->IsKeyDown(SDL_SCANCODE_A)) {
         x -= 100 * dt;
+        m_Logger->Log("A is pressed");
     }
     if (m_Input->IsKeyDown(SDL_SCANCODE_W)) {
         y -= 100 * dt;
+        m_Logger->Log("W is pressed");
     }
     if (m_Input->IsKeyDown(SDL_SCANCODE_S)) {
         y += 100 * dt;
+        m_Logger->Log("S is pressed");
     }
     if (m_Input->IsKeyDown(SDL_SCANCODE_ESCAPE)) {
         m_Input->m_IsRunning = false;

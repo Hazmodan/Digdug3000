@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 namespace ProjetEngin {
 	class IInput {
 	public:
@@ -10,6 +7,8 @@ namespace ProjetEngin {
 		virtual bool IsKeyDown(int key) = 0;
 		virtual bool IsButtonDown(int button) = 0;
 		virtual void GetMousePosition(int* x, int* y) = 0;
+
+	private: 
 
 	protected: 
 		bool m_IsRunning = false;
