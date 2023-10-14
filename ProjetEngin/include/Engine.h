@@ -4,6 +4,7 @@
 #include <fstream>
 #include "IInput.h"
 #include "iLogger.h"
+#include "IGraphics.h"
 
 namespace ProjetEngin {
 	class Engine final {
@@ -29,6 +30,10 @@ namespace ProjetEngin {
 
 		ILogger* m_Logger = nullptr;
 
+		IGraphics* m_Graphics = nullptr;
+
+		size_t digdugtest; 
+		RectF m_DigdugRect;
 	};
 
 }

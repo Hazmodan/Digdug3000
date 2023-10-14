@@ -5,44 +5,31 @@
 #include "Windows.h">
 #include "fileLogger.h"
 #include "consoleLogger.h"
+#include "SdlGraphics.h"
 
-static SDL_Renderer* _renderer = NULL;
-static SDL_Window* _window = NULL;
 using namespace ProjetEngin;
 
 bool Engine::Init(const char* name, int w, int h) {
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        SDL_Log(SDL_GetError());
-        return false;
-    }
-    int _x = SDL_WINDOWPOS_CENTERED;
-    int _y = SDL_WINDOWPOS_CENTERED;
-    Uint32 _flag = SDL_WINDOW_TOOLTIP;
-    _window = SDL_CreateWindow(name, _x, _y, w, h, _flag);
+    m_Graphics = new SdlGraphics();
 
-    if (!_window)
-    {
-        SDL_Log(SDL_GetError());
-        return false;
-    }
+    m_Graphics->Initialize("DigDUG3000", 800, 600);
 
-
-    Uint32 _flag2 = SDL_RENDERER_ACCELERATED;
-    _renderer = SDL_CreateRenderer(_window, -1, _flag2);
-
-    if (!_renderer)
-    {
-        SDL_Log(SDL_GetError());
-        return false;
-    }
     m_Input = new SdlInput();
     m_IsInit = true;
+    
+//placeholder/test start
+    digdugtest = m_Graphics->LoadTexture("assets/digdugTest.png");
+    m_DigdugRect = RectF();
+    m_DigdugRect.x = 16;
+    m_DigdugRect.y = 16;
+    m_DigdugRect.h = 100;
+    m_DigdugRect.w = 100;
+//placeholder/test end
 
 #ifdef _DEBUG
     m_Logger = new ConsoleLogger();
 #endif
-
      
     //This is release
 #ifdef NDEBUG
@@ -109,18 +96,13 @@ void Engine::Update(float dt)
 
 void Engine::Render(void)
 {
-    SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(_renderer);
+    m_Graphics->Clear();
+    
+    m_Graphics->DrawRect(x, y, 102, 102, Color::Red);
 
-    SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-    SDL_Rect get_rect = { 0 };
-    get_rect.x = x;
-    get_rect.y = y;
-    get_rect.h = 100;
-    get_rect.w = 100;
-    SDL_RenderDrawRect(_renderer, &get_rect);
+    m_Graphics->DrawTexture(digdugtest, m_DigdugRect, Color::Red);
 
-    SDL_RenderPresent(_renderer);
+    m_Graphics->Present();    
 }
 
 void Engine::Shutdown(void)
@@ -129,9 +111,7 @@ void Engine::Shutdown(void)
     {
         delete m_Input;
     }
-    SDL_DestroyRenderer(_renderer);
-    SDL_DestroyWindow(_window);
-    SDL_Quit();
+    m_Graphics->Shutdown();
 }
 
 

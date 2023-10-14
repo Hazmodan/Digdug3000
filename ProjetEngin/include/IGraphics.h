@@ -18,12 +18,10 @@ namespace ProjetEngin {
 	};
 	class IGraphics {
 
-
-
 	public:
 		virtual ~IGraphics() = default;
 
-		virtual bool Initialize(const std::string& title, int w, int h) = 0;
+		virtual bool Initialize(const char* name, int w, int h) = 0;
 		virtual void Shutdown() = 0;
 		virtual void SetColor(const Color& color) = 0;
 		virtual void Clear() = 0;
